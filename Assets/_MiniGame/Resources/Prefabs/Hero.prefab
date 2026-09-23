@@ -9,12 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8582100294869777232}
-  - component: {fileID: 8498450368392835316}
   - component: {fileID: 8636765888176297645}
   - component: {fileID: 2704455014691169236}
   - component: {fileID: -6691928405520960230}
   - component: {fileID: 5519354416351125535}
-  - component: {fileID: 1408512981869417174}
+  - component: {fileID: 4924221128539867019}
   m_Layer: 0
   m_Name: Hero
   m_TagString: Untagged
@@ -39,20 +38,6 @@ Transform:
   - {fileID: 8616728020342641636}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8498450368392835316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3219846817588449211}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 379cf4e1b99fd4397bbbd9cde2362c2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _agent: {fileID: 2704455014691169236}
-  _rotationSpeed: 600
 --- !u!114 &8636765888176297645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,7 +123,7 @@ CapsuleCollider:
   m_Height: 1.7026987
   m_Direction: 1
   m_Center: {x: 0, y: 1.0328863, z: 0}
---- !u!114 &1408512981869417174
+--- !u!114 &4924221128539867019
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -147,11 +132,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3219846817588449211}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 035e46193e3a4b0a83908c9eea9aa19f, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b5edcbeb9c341afbcdabbcf6e99e1d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bulletPrefab: {fileID: 2557817860067447646, guid: 82af7051e9ccf4c63a04abe0988f474f,
-    type: 3}
+  _agent: {fileID: 2704455014691169236}
+  _rotationSpeed: 600
   _bulletSpawnPoint: {fileID: 8616728020342641636}
 --- !u!1 &8864988302979217400
 GameObject:

@@ -8,6 +8,11 @@ namespace _MiniGame
     public class LevelConfig : ScriptableObject
     {
         [field: SerializeField]
+        public WinConditionType WinConditionType { get; private set; }
+        [field: SerializeField]
+        public LoseConditionType LoseConditionType { get; private set; }
+
+        [field: SerializeField]
         public int EnemiesSpawnedToLose { get; private set; }
         [field: SerializeField]
         public int DefeatEnemiesToWin { get; private set; }

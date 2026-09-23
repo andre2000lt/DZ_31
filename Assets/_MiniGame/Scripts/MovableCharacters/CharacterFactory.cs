@@ -15,33 +15,43 @@ namespace _MiniGame
             _controllersFactory = controllersFactory;
         }
 
-        public Character CreateHero
+        public Hero CreateHero
         (
-            Character prefab,
+            Hero prefab,
             int healthAmount,
             float rotationSpeed,
             float speed,
             Vector3 spawnPosition
         )
         {
-            Character hero =
-                CreateCharacter(prefab, healthAmount, rotationSpeed, speed, spawnPosition);
+            Hero hero = Object.Instantiate(prefab, spawnPosition, Quaternion.identity, null);
+            Rotator rotator = new(hero.transform, rotationSpeed);
+            Bullet bulletPrefab = Resources.Load<Bullet>("Prefabs/Bullet");
+
+            hero.Initialize(healthAmount, rotator, speed, bulletPrefab);
+
+            CharacterView characterView = hero.GetComponent<CharacterView>();
+            characterView.Initialize(hero);
 
             CinemachineVirtualCamera virtualCameraPrefab = Resources.Load<CinemachineVirtualCamera>("Prefabs/Virtual Camera");
             CinemachineVirtualCamera cinemachine = Object.Instantiate(virtualCameraPrefab);
             cinemachine.Follow = hero.transform;
 
-            UserMoveController controller = _controllersFactory.CreateUserMoveController(hero);
-            controller.Enable();
-            _controllersUpdateService.Add(hero, controller);
+            UserMoveController moveController = _controllersFactory.CreateUserMoveController(hero);
+            UserShootController shootController = _controllersFactory.CreateShootController(hero);
+            ComposireController userCompositeController =
+                _controllersFactory.CreateShootAndMoveController(shootController, moveController);
+
+            userCompositeController.Enable();
+            _controllersUpdateService.Add(hero, userCompositeController);
 
             return hero;
         }
 
 
-        public Character CreateEnemy
+        public Enemy CreateEnemy
         (
-            Character prefab,
+            Enemy prefab,
             int healthAmount,
             float rotationSpeed,
             float speed,
@@ -49,10 +59,14 @@ namespace _MiniGame
             float changeDirectionInterval
         )
         {
-            Character enemy =
-                CreateCharacter(prefab, healthAmount, rotationSpeed, speed, spawnPosition);
+            Enemy enemy = Object.Instantiate(prefab, spawnPosition, Quaternion.identity, null);
+            Rotator rotator = new(enemy.transform, rotationSpeed);
+            enemy.Initialize(healthAmount, rotator, speed);
 
-            EnemyController controller = _controllersFactory.CreateEnemyController(enemy, changeDirectionInterval);
+            CharacterView characterView = enemy.GetComponent<CharacterView>();
+            characterView.Initialize(enemy);
+
+            RandomeMovementController controller = _controllersFactory.CreateEnemyController(enemy, changeDirectionInterval);
             controller.Enable();
             _controllersUpdateService.Add(enemy, controller);
 

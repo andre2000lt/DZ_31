@@ -1,5 +1,6 @@
 using System.Collections;
 using _Minigame;
+using _MiniGame.Scripts.EndGameConditions;
 using UnityEngine;
 
 namespace _MiniGame
@@ -8,17 +9,17 @@ namespace _MiniGame
     {
         [SerializeField] private LoadingWindow _loadingWindow;
         [SerializeField] private ConfirmWindow _confirmWindow;
-        [SerializeField] private WinConditionType _winConditionType;
-        [SerializeField] private LoseConditionType _loseConditionType;
 
         private ControllersFactory _controllersFactory;
         private ControllersUpdateService _controllersUpdateService;
         private CharacterFactory _characterFactory;
+        private EndGameConditionsFactory _endGameConditionsFactory;
+        private EndGameChecker _endGameChecker;
 
         private HeroSpawner _heroSpawner;
         private EnemiesSpawner _enemiesSpawner;
 
-        private GamePlayCircle _gamePlayCircle;
+        private GamePlayCycle _gamePlayCycle;
 
 
         private void Awake()
@@ -29,11 +30,7 @@ namespace _MiniGame
         private void Update()
         {
             _controllersUpdateService?.Update(Time.deltaTime);
-            _gamePlayCircle?.Update(Time.deltaTime);
-        }
-
-        private void OnDestroy()
-        {
+            _gamePlayCycle?.Update(Time.deltaTime);
         }
 
         private IEnumerator StartProcess()
@@ -52,16 +49,19 @@ namespace _MiniGame
 
             _enemiesSpawner = new EnemiesSpawner(levelConfig, _characterFactory, _controllersUpdateService, this);
 
-            _gamePlayCircle = new GamePlayCircle
+            _endGameConditionsFactory = new EndGameConditionsFactory(_heroSpawner, _enemiesSpawner, levelConfig);
+            _endGameChecker = new EndGameChecker(levelConfig, _endGameConditionsFactory);
+
+
+            _gamePlayCycle = new GamePlayCycle
             (
                 _confirmWindow,
                 levelConfig,
                 _heroSpawner,
                 heroConfig,
                 _enemiesSpawner,
-                _winConditionType,
-                _loseConditionType,
                 _controllersUpdateService,
+                _endGameChecker,
                 this
             );
 
@@ -69,7 +69,7 @@ namespace _MiniGame
 
             _loadingWindow.Hide();
 
-            yield return _gamePlayCircle.Launch();
+            yield return _gamePlayCycle.Launch();
         }
     }
 }

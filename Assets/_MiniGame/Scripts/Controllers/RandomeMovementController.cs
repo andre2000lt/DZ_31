@@ -2,14 +2,14 @@ using UnityEngine;
 
 namespace _MiniGame
 {
-    public class EnemyController : Controller
+    public class RandomeMovementController : Controller
     {
         private float _changeDirectionInterval;
         private IMovable _movableUnit;
         private float timer;
         private Vector3 _direction = Vector3.zero;
 
-        public EnemyController(IMovable movableUnit, float changeDirectionInterval)
+        public RandomeMovementController(IMovable movableUnit, float changeDirectionInterval)
         {
             _movableUnit = movableUnit;
             _changeDirectionInterval = changeDirectionInterval;

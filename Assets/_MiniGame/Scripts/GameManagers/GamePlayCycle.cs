@@ -1,39 +1,41 @@
 using System.Collections;
 using _Minigame;
+using _MiniGame.Scripts.EndGameConditions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace _MiniGame
 {
-    public class GamePlayCircle
+    public class GamePlayCycle
     {
-        private ConfirmWindow _confirmWindow;
-        private EndGameWindow _lostGameWindow;
-        private EndGameWindow _wonGameWindow;
+        private readonly ConfirmWindow _confirmWindow;
+        private readonly EndGameWindow _lostGameWindow;
+        private readonly EndGameWindow _wonGameWindow;
 
-        private LevelConfig _levelConfig;
+        private readonly LevelConfig _levelConfig;
         private GameMode _gameMode;
 
-        private HeroSpawner _heroSpawner;
-        private HeroConfig _heroConfig;
+        private readonly HeroSpawner _heroSpawner;
+        private readonly HeroConfig _heroConfig;
 
-        private EnemiesSpawner _enemiesSpawner;
+        private readonly EnemiesSpawner _enemiesSpawner;
+        private readonly EndGameChecker _endGameChecker;
+
 
         private WinConditionType _winConditionType;
         private LoseConditionType _loseConditionType;
 
-        private ControllersUpdateService _controllersUpdateService;
-        private MonoBehaviour _coroutineRunner;
+        private readonly ControllersUpdateService _controllersUpdateService;
+        private readonly MonoBehaviour _coroutineRunner;
 
-        public GamePlayCircle(
+        public GamePlayCycle(
             ConfirmWindow confirmWindow,
             LevelConfig levelConfig,
             HeroSpawner heroSpawner,
             HeroConfig heroConfig,
             EnemiesSpawner enemiesSpawner,
-            WinConditionType winConditionType,
-            LoseConditionType loseConditionType,
             ControllersUpdateService controllersUpdateService,
+            EndGameChecker endGameChecker,
             MonoBehaviour coroutineRunner)
         {
             _confirmWindow = confirmWindow;
@@ -41,9 +43,9 @@ namespace _MiniGame
             _heroSpawner = heroSpawner;
             _heroConfig = heroConfig;
             _enemiesSpawner = enemiesSpawner;
-            _winConditionType = winConditionType;
-            _loseConditionType = loseConditionType;
+            _endGameChecker = endGameChecker;
             _controllersUpdateService = controllersUpdateService;
+
             _coroutineRunner = coroutineRunner;
 
             Canvas canvasPrefab = Resources.Load<Canvas>("Prefabs/Canvas");
@@ -63,7 +65,8 @@ namespace _MiniGame
             _heroSpawner.Reset();
 
             Character hero = _heroSpawner.Spawn(_heroConfig);
-            _gameMode = new GameMode(hero, _enemiesSpawner, _levelConfig, _winConditionType, _loseConditionType);
+
+            _gameMode = new GameMode(_enemiesSpawner, _endGameChecker);
             _gameMode.GameLost += OnGameLost;
             _gameMode.GameWon += OnGameWon;
 

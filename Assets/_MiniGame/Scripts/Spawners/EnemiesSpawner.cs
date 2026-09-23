@@ -14,10 +14,10 @@ namespace _Minigame
         private readonly ControllersUpdateService _controllersUpdateService;
 
         private readonly IReadOnlyList<Vector3> _spawnPoints;
-        private readonly Character _prefab;
+        private readonly Enemy _prefab;
         private readonly LevelConfig _levelConfig;
 
-        private readonly List<Character> _enemies = new();
+        private readonly List<Enemy> _enemies = new();
 
         public EnemiesSpawner
         (
@@ -32,7 +32,7 @@ namespace _Minigame
             _levelConfig = levelConfig;
             _spawnPoints = _levelConfig.EnemiesSpawnPoints;
 
-            _prefab = Resources.Load<Character>("Prefabs/Enemy");
+            _prefab = Resources.Load<Enemy>("Prefabs/Enemy");
 
             _enemyConfig = _levelConfig.EnemyConfig;
         }
@@ -54,7 +54,7 @@ namespace _Minigame
 
         public void Reset()
         {
-            foreach (Character enemy in _enemies)
+            foreach (Enemy enemy in _enemies)
             {
                 enemy.Dead -= OnEnemyDead;
                 Object.Destroy(enemy.gameObject);
@@ -69,7 +69,7 @@ namespace _Minigame
         {
             Vector3 spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
 
-            Character enemy = _characterFactory.CreateEnemy
+            Enemy enemy = _characterFactory.CreateEnemy
             (
                 _prefab,
                 _enemyConfig.Health,

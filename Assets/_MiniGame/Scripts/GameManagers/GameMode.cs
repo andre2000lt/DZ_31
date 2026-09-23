@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using _Minigame;
+using _MiniGame.Scripts.EndGameConditions;
 using UnityEngine;
 
 namespace _MiniGame
@@ -10,32 +10,19 @@ namespace _MiniGame
         public event Action GameWon;
         public event Action GameLost;
 
-        private readonly Character _hero;
-        private EnemiesSpawner _enemiesSpawner;
-        private LevelConfig _levelConfig;
+        private readonly EnemiesSpawner _enemiesSpawner;
+        private readonly EndGameChecker _endGameChecker;
 
         private bool _isRunning;
-        private float _timePassed;
-
-        private List<Func<bool>> _winConditions = new();
-        private List<Func<bool>> _loseConditions = new();
 
         public GameMode
         (
-            Character hero,
             EnemiesSpawner enemiesSpawner,
-            LevelConfig levelConfig,
-            WinConditionType winConditionType,
-            LoseConditionType loseConditionType
+            EndGameChecker endGameChecker
         )
         {
-            _hero = hero;
-
-            _levelConfig = levelConfig;
             _enemiesSpawner = enemiesSpawner;
-
-            SetWinConditions(winConditionType);
-            SetLoseConditions(loseConditionType);
+            _endGameChecker = endGameChecker;
         }
 
         public void Update(float deltaTime)
@@ -44,14 +31,14 @@ namespace _MiniGame
 
             _enemiesSpawner?.Update(deltaTime);
 
-            _timePassed += deltaTime;
+            EndGameStatus result = _endGameChecker.GetStatus(deltaTime);
 
-            if (IsGameLost(_loseConditions))
+            if (result == EndGameStatus.GameLost)
             {
                 ProcessDefeat();
             }
 
-            if (IsGameWon(_winConditions))
+            if (result == EndGameStatus.GameWon)
             {
                 ProcessVictory();
             }
@@ -83,69 +70,6 @@ namespace _MiniGame
         private void ProcessEndGame()
         {
             _isRunning = false;
-        }
-
-
-        #region SetConditions
-
-        private void SetWinConditions(WinConditionType winConditionType)
-        {
-            Func<bool> secondsPassedCondition = () =>
-                _timePassed >= _levelConfig.SecondsToSurvive;
-
-            Func<bool> enemiesDefeatedCondition = () =>
-                _enemiesSpawner.DeadEnemyCount >= _levelConfig.DefeatEnemiesToWin;
-
-            switch (winConditionType)
-            {
-                case WinConditionType.DefeatNEnemies:
-                    _winConditions.Add(enemiesDefeatedCondition);
-                    break;
-
-                case WinConditionType.SurviveNSeconds:
-                    _winConditions.Add(secondsPassedCondition);
-                    break;
-            }
-        }
-
-        private void SetLoseConditions(LoseConditionType loseConditionType)
-        {
-            Func<bool> heroDeadCondition = () => _hero.IsDead;
-            Func<bool> nEnemiesSpawnedCondition = () =>
-                _enemiesSpawner.EnemyCount >= _levelConfig.EnemiesSpawnedToLose;
-
-            switch (loseConditionType)
-            {
-                case LoseConditionType.HeroIsDead:
-                    _loseConditions.Add(heroDeadCondition);
-                    break;
-
-                case LoseConditionType.NEnemiesSpawned:
-                    _loseConditions.Add(nEnemiesSpawnedCondition);
-                    break;
-            }
-        }
-
-        #endregion
-
-        private bool IsGameLost(List<Func<bool>> conditions)
-        {
-            foreach (Func<bool> condition in conditions)
-            {
-                if (condition()) return true;
-            }
-
-            return false;
-        }
-
-        private bool IsGameWon(List<Func<bool>> conditions)
-        {
-            foreach (Func<bool> condition in conditions)
-            {
-                if (condition() == false) return false;
-            }
-
-            return true;
         }
     }
 }

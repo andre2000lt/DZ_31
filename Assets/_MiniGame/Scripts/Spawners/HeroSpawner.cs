@@ -5,13 +5,11 @@ namespace _MiniGame
 {
     public class HeroSpawner
     {
-        private readonly Character _prefab;
+        private readonly Hero _prefab;
         private readonly Vector3 _spawnPoint;
 
         private readonly CharacterFactory _characterFactory;
         private ControllersUpdateService _controllersUpdateService;
-
-        private Character _hero;
 
         public HeroSpawner
         (
@@ -20,15 +18,17 @@ namespace _MiniGame
             ControllersUpdateService controllersUpdateService
         )
         {
-            _prefab = Resources.Load<Character>("Prefabs/Hero");
+            _prefab = Resources.Load<Hero>("Prefabs/Hero");
             _spawnPoint = levelConfig.HeroSpawnPoint;
             _characterFactory = characterFactory;
             _controllersUpdateService = controllersUpdateService;
         }
 
-        public Character Spawn(HeroConfig config)
+        public Hero Hero { get; private set; }
+
+        public Hero Spawn(HeroConfig config)
         {
-            _hero = _characterFactory.CreateHero
+            Hero = _characterFactory.CreateHero
             (
                 _prefab,
                 config.HealthAmount,
@@ -37,17 +37,17 @@ namespace _MiniGame
                 _spawnPoint
             );
 
-            _hero.Dead += OnHeroDead;
+            Hero.Dead += OnHeroDead;
 
-            return _hero;
+            return Hero;
         }
 
         public void Reset()
         {
-            if (_hero == null) return;
+            if (Hero == null) return;
 
-            _hero.Dead -= OnHeroDead;
-            Object.Destroy(_hero.gameObject);
+            Hero.Dead -= OnHeroDead;
+            Object.Destroy(Hero.gameObject);
         }
 
         private void OnHeroDead(Character hero)
