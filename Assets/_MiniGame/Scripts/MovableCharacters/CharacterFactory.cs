@@ -72,24 +72,5 @@ namespace _MiniGame
 
             return enemy;
         }
-
-        private Character CreateCharacter
-        (
-            Character prefab,
-            int healthAmount,
-            float rotationSpeed,
-            float speed,
-            Vector3 spawnPosition
-        )
-        {
-            Character character = Object.Instantiate(prefab, spawnPosition, Quaternion.identity, null);
-            Rotator rotator = new(character.transform, rotationSpeed);
-            character.Initialize(healthAmount, rotator, speed);
-
-            CharacterView characterView = character.GetComponent<CharacterView>();
-            characterView.Initialize(character);
-
-            return character;
-        }
     }
 }
